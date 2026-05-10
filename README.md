@@ -1,25 +1,26 @@
-If megatall skyscrapes are so profitable and recognizable, why doesn't every city build one? This model will answer why.
+If megatall skyscrapers are so profitable and recognizable, why doesn't every city build one? This model will answer why.
 
 Model structure:
 
 Net profit after y years:
 
-p = y(Rf - C) - e
+p = y * (R*f - C) * (1 - t) - e
 
 Variables:
 - e: construction cost (USD)
 - R: annual revenue projection (USD)
 - f: fame multiplier
 - C: annual operating cost (USD)
+- t: effective tax rate (0.0 to 0.99)
 - y: years since opening
 
 Break-even condition p = 0:
 
-y = e / (Rf - C)
+y = e / ((R*f - C) * (1 - t))
 
-If Rf - C <= 0, the project will never break even in this model.
+If (R*f - C) * (1 - t) <= 0, the project will never break even in this model.
 
-:Fame Factor Definition
+Fame Factor Definition:
 
 To keep inputs consistent, use this rough scale:
 - f = 1.0: world-famous landmark (e.g. The Burj Khalifa)
@@ -28,21 +29,27 @@ To keep inputs consistent, use this rough scale:
 
 The implication:
 
-High construction cost can only be recovered if fame-adjusted net cashflow, Rf - C, is strong. Because only one tower can be 'the tallest' at a time, most cities cannot sustain that level of attention, making the payback both slower and riskier.
+High construction cost can only be recovered if after-tax, fame-adjusted net cashflow, (R*f - C) * (1 - t), is strong. Because only one tower can be 'the tallest' at a time, most cities cannot sustain that level of attention, making the payback both slower and riskier. Taxation further extends break-even timelines, especially for high-revenue projects.
 
 Sensitivity Analysis:
 
-The program tests a stress case where fame drops by 20% after a new taller building appears:
-- f_new = 0.8f
-- y_new = e / (Rf_new - C)
+The program tests two stress cases:
 
-This shows how a loss of attention can delay the break-even or even remove it entirely.
+Case 1 — Fame shock (new taller building appears):
+- f_new = 0.8f
+- y_new = e / ((R*f_new - C) * (1 - t))
+
+Case 2 — Cost overrun (operating costs rise 15%):
+- C_new = 1.15C
+- y_new = e / ((R*f - C_new) * (1 - t))
+
+Both cases show how external shocks can delay break-even or remove it entirely.
 
 Build and Run:
 
 Compile:
 
-g++ -std=c++17 -Wall -Wextra -pedantic main.cpp -o calculator
+g++ -std=c++23 -Wall -Wextra -pedantic main.cpp -o calculator
 
 Run:
 
@@ -50,8 +57,9 @@ Run:
 
 Critical Assumptions and Limitations:
 
-The following simplications are drastic but intentional: the model is for intuition, not a full finance evaluation.
+The following simplifications are drastic but intentional: the model is for intuition, not a full finance evaluation.
 
-- Revenue and operating cost are treated as constant over time.
+- Revenue, operating cost, and tax rate are treated as constant over time.
 - Competition is modeled as an immediate 20% fame drop while real competition is gradual.
-- Many other factors are not addressed, including, financing, interest rates, inflation, etc.
+- Cost overrun is modeled as an immediate 15% increase in operating cost.
+- Many other factors are not addressed, including financing, interest rates, inflation, etc.
