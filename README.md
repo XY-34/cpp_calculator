@@ -33,7 +33,7 @@ High construction cost can only be recovered if after-tax, fame-adjusted net cas
 
 Sensitivity Analysis:
 
-The program tests two stress cases:
+The program tests two stress cases using a unified framework:
 
 Case 1 — Fame shock (new taller building appears):
 - f_new = 0.8f
@@ -43,7 +43,7 @@ Case 2 — Cost overrun (operating costs rise 15%):
 - C_new = 1.15C
 - y_new = e / ((R*f - C_new) * (1 - t))
 
-Both cases show how external shocks can delay break-even or remove it entirely.
+Both cases are evaluated with shared logic to avoid redundant calculations and display how external shocks can delay break-even or remove it entirely. Base conditions (zero cost, no profit margin) are computed once and reused for efficiency.
 
 Build and Run:
 

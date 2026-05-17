@@ -67,45 +67,34 @@ int main() {
 	             "Case 2: C rises 15% (cost overrun).\n"
 	             "Keeping other variables fixed.\n";
 
-	// case 1: fame drop
-	const double fd   = f * 0.8;
-	const double dn1  = (r * fd - c) * (1.0 - t);
+	constexpr double FAME_DROP = 0.8;
+	constexpr double COST_RISE = 1.15;
+	const bool zero_e = (e == 0.0);
+	const bool no_profit = (nat <= 0.0);
 
-	// case 2: cost overrun
-	const double cr   = c * 1.15;
-	const double dn2  = (rf - cr) * (1.0 - t);
+	const double dn1 = (r * f * FAME_DROP - c) * (1.0 - t);
+	const double dn2 = (rf - c * COST_RISE) * (1.0 - t);
 
-	std::cout << "-- Fame drop 20% --\n";
-	if (e == 0.0) {
-		std::cout << "Both cases: 0 years\n";
-	} else if (nat <= 0.0) {
-		std::cout << "Base case already never breaks even.\n";
-	} else if (dn1 <= 0.0) {
-		std::cout << "Base case breaks even, fame-drop case does not.\n";
-	} else {
-		const double yd1 = e / dn1;
-		std::cout << std::format(
-			"Base y: {:.2f} years\n"
-			"Fame-drop y: {:.2f} years\n"
-			"Extra years: {:.2f}\n",
-			y, yd1, yd1 - y);
-	}
+	auto sensitivity_case = [&](const char* name, double net_scenario) {
+		std::cout << "-- " << name << " --\n";
+		if (zero_e) {
+			std::cout << "Both cases: 0 years\n";
+		} else if (no_profit) {
+			std::cout << "Base case already never breaks even.\n";
+		} else if (net_scenario <= 0.0) {
+			std::cout << "Base case breaks even, " << name << " case does not.\n";
+		} else {
+			const double y_scenario = e / net_scenario;
+			std::cout << std::format(
+				"Base y: {:.2f} years\n"
+				"{}: {:.2f} years\n"
+				"Extra years: {:.2f}\n",
+				y, name, y_scenario, y_scenario - y);
+		}
+	};
 
-	std::cout << "-- Cost overrun 15% --\n";
-	if (e == 0.0) {
-		std::cout << "Both cases: 0 years\n";
-	} else if (nat <= 0.0) {
-		std::cout << "Base case already never breaks even.\n";
-	} else if (dn2 <= 0.0) {
-		std::cout << "Base case breaks even, cost-overrun case does not.\n";
-	} else {
-		const double yd2 = e / dn2;
-		std::cout << std::format(
-			"Base y: {:.2f} years\n"
-			"Overrun y: {:.2f} years\n"
-			"Extra years: {:.2f}\n",
-			y, yd2, yd2 - y);
-	}
+	sensitivity_case("Fame drop (20%)", dn1);
+	sensitivity_case("Cost overrun (15%)", dn2);
 
 	std::cout << "\nNote: While real competition is gradual, this is just a stress test.\n";
 
